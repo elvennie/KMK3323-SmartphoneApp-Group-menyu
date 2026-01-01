@@ -1,0 +1,7 @@
+{
+  "name": "menyu_final",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

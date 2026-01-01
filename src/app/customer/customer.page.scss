@@ -1,0 +1,63 @@
+.custom-header-green {
+  background: #00A65A; /* Warna hijau asal */
+}
+
+.addon-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-green {
+  color: #00A65A;
+  font-weight: bold;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  .btn-qty-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid #00A65A;
+    background: white;
+    color: #00A65A;
+    font-size: 18px;
+  }
+}
+
+/* CSS UNTUK BUTANG BAWAH */
+.footer-buttons {
+  padding: 15px 20px;
+  display: flex;
+  gap: 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-cancel-outline {
+  flex: 1;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 12px;
+  color: #666;
+  font-weight: bold;
+}
+
+.btn-add-cart-green {
+  flex: 1.2;
+  background: #00A65A;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 166, 90, 0.2);
+}

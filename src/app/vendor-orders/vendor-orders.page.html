@@ -1,0 +1,109 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar style="--background: white; padding-top: 10px; border-bottom: 1px solid #f0f0f0;">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" style="--color: #333; background: #f4f4f4; border-radius: 8px; margin-left: 10px;">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    
+    <ion-title style="font-weight: bold; color: #333; font-size: 18px;">Order Management</ion-title>
+
+    <ion-buttons slot="end" style="padding-right: 15px;">
+      <div style="display: flex; background: #003366; border-radius: 6px; overflow: hidden; border: 1px solid #003366;">
+        <button style="background: #003366; color: white; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold;">EN</button>
+        <button style="background: white; color: #003366; border: none; padding: 6px 12px; font-size: 12px; font-weight: bold;">BM</button>
+      </div>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <div style="background: white; padding: 10px 20px;">
+    <p style="margin: 0; color: #666; font-size: 14px;">{{ dataService.orders.length }} orders found</p>
+  </div>
+</ion-header>
+
+<ion-content style="--background: #f8f9fa;">
+  <div style="padding: 15px;">
+    
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <button (click)="orderTab = 'active'"
+              [style.background]="orderTab === 'active' ? '#fff' : '#eee'"
+              [style.border]="orderTab === 'active' ? '1px solid #ddd' : 'none'"
+              style="flex: 1; padding: 12px; border-radius: 8px; font-weight: bold; color: #333;">
+        Active ({{ (dataService.orders | filter: 'Pending').length }})
+      </button>
+      <button (click)="orderTab = 'completed'"
+              [style.background]="orderTab === 'completed' ? '#003366' : '#eee'"
+              [style.color]="orderTab === 'completed' ? 'white' : '#333'"
+              style="flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold;">
+        Completed
+      </button>
+    </div>
+
+    <div *ngFor="let order of dataService.orders" 
+         style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: bold; color: #333;">Order #{{ order.id }}</h3>
+        <div style="background: #f4f4f4; padding: 5px 15px; border-radius: 20px; border: 1px solid #ddd; font-size: 12px; color: #333;">
+          {{ order.status }}
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <div style="background: #eef4ff; padding: 5px; border-radius: 50%; display: flex;">
+          <ion-icon name="person" style="font-size: 16px; color: #5dade2;"></ion-icon>
+        </div>
+        <span style="font-size: 15px; font-weight: 600; color: #333;">{{ order.customerName }}</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; color: #e74c3c; font-weight: bold;">
+        <ion-icon name="time-outline" style="font-size: 18px;"></ion-icon>
+        <span style="font-size: 14px;">{{ order.type || 'ASAP' }}</span>
+      </div>
+      <div style="font-size: 14px; color: #666; margin-bottom: 15px; padding-left: 26px;">
+        {{ order.date | date:'HH:mm' }}
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #f0f0f0; margin-bottom: 15px;">
+
+      <p style="margin: 0 0 10px 0; font-size: 14px; color: #666; font-weight: 500;">items:</p>
+      <div *ngFor="let item of order.items" 
+           style="background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span style="color: #333; font-weight: 500;">{{ item.quantity }}x {{ item.name }}</span>
+        <span style="font-weight: 600;">RM{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 15px 0;">
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <span style="font-weight: bold; font-size: 15px; color: #333;">Total:</span>
+        <span style="font-weight: 800; font-size: 16px; color: #333;">RM{{ order.total | number:'1.2-2' }}</span>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: bold; color: #333;">
+          Details
+        </button>
+
+        <button *ngIf="order.status === 'Pending'" 
+                (click)="updateStatus(order, 'Preparing')"
+                style="flex: 1; background: #ff4444; color: white; border: none; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold;">
+          Mark as Preparing
+        </button>
+
+        <button *ngIf="order.status === 'Preparing'" 
+                (click)="updateStatus(order, 'Ready')"
+                style="flex: 1; background: #ffbb33; color: white; border: none; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold;">
+          Mark as Ready
+        </button>
+
+        <button *ngIf="order.status === 'Ready'" 
+                (click)="updateStatus(order, 'Completed')"
+                style="flex: 1; background: #00c851; color: white; border: none; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: bold;">
+          Mark as Completed
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

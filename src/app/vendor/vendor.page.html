@@ -1,0 +1,224 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar style="--background: #001a33; --color: white; padding: 5px 10px;">
+    <ion-buttons slot="start">
+      <ion-button *ngIf="currentView === 'dashboard'" (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+      
+      <ion-button *ngIf="currentView !== 'dashboard'" (click)="currentView = 'dashboard'">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      <div style="font-size: 16px; font-weight: bold;">
+        {{ currentView === 'dashboard' ? 'Order Management' : (currentView === 'menu' ? 'Manage Menu' : 'Orders Management') }}
+      </div>
+      <div style="font-size: 10px; opacity: 0.7;">Vendor Dashboard</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background: #f8f9fa;">
+  <div class="container" style="padding: 16px;">
+
+    <div *ngIf="currentView === 'menu'">
+      <ion-button expand="block" (click)="goToAddMenu()"
+                  style="--background: #002244; --color: white; --border-radius: 12px; font-weight: bold; margin-bottom: 20px; height: 48px;">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        ADD NEW MENU ITEM
+      </ion-button>
+
+      <div class="menu-list">
+        <div class="menu-card" *ngFor="let item of dataService.menuItems" 
+             style="background: white; border-radius: 12px; margin-bottom: 15px; padding: 15px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          
+          <div style="display: flex; gap: 15px;">
+            <div style="width: 80px; height: 80px; border-radius: 10px; overflow: hidden; background: #f4f4f4;">
+              <img [src]="item.image" onerror="this.src='assets/images/placeholder.jpg'" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: bold; color: #333;">{{ item.name }}</h3>
+                <ion-icon name="create-outline" color="medium"></ion-icon>
+              </div>
+              <p style="margin: 4px 0; color: #888; font-size: 12px;">{{ item.category }}</p>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <span style="font-weight: bold; color: #001a33; font-size: 15px;">RM{{ item.price | number:'1.2-2' }}</span>
+                <div style="font-size: 11px;">
+                  <span style="color: #666;">Available: </span>
+                  <span [style.color]="item.available ? '#28a745' : '#dc3545'" style="font-weight: 900;">
+                    {{ item.available ? 'YES' : 'NO' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px;">
+            <ion-button size="small" fill="outline" color="dark" (click)="viewItemDetails(item)" style="--border-radius: 8px; font-weight: bold; height: 35px;">Details</ion-button>
+            <ion-button size="small" fill="outline" color="dark" (click)="toggleAvailability(item)" style="--border-radius: 8px; font-weight: bold; height: 35px;">Toggle</ion-button>
+            <ion-button size="small" fill="outline" color="danger" (click)="deleteMenuItem(item.id)" style="--border-radius: 8px; font-weight: bold; height: 35px;">Delete</ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="currentView === 'dashboard'">
+      <h3 style="font-weight: bold; margin-bottom: 15px; color: #333; font-size: 18px;">Overview</h3>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="background: #fff4e5; padding: 15px; border-radius: 12px;">
+          <p style="margin: 0; font-size: 11px; color: #a3621a; font-weight: bold;">Active Orders</p>
+          <h2 style="margin: 5px 0 0 0; font-weight: 800; color: #e67e22;">{{ vendorStats?.activeOrders || 0 }}</h2>
+        </div>
+        <div style="background: #001a33; color: white; padding: 15px; border-radius: 12px;">
+          <p style="margin: 0; font-size: 11px; opacity: 0.8;">Total Sales</p>
+          <h2 style="margin: 5px 0 0 0; font-weight: 800;">RM{{ vendorStats?.totalSalesToday | number:'1.2-2' }}</h2>
+        </div>
+        <div style="background: #e3f2fd; padding: 15px; border-radius: 12px;">
+          <p style="margin: 0; font-size: 11px; color: #1976d2; font-weight: bold;">Today's Orders</p>
+          <h2 style="margin: 5px 0 0 0; font-weight: 800; color: #1976d2;">{{ vendorStats?.todayOrdersCount || 0 }}</h2>
+        </div>
+        <div style="background: #f1f8e9; padding: 15px; border-radius: 12px;">
+          <p style="margin: 0; font-size: 11px; color: #388e3c; font-weight: bold;">Menu Items</p>
+          <h2 style="margin: 5px 0 0 0; font-weight: 800; color: #388e3c;">{{ vendorStats?.menuItemsCount || 0 }}</h2>
+        </div>
+        <div style="background: #fffde7; padding: 15px; border-radius: 12px; border: 1px solid #fff59d;">
+          <p style="margin: 0; font-size: 11px; color: #857b26; font-weight: bold;">Avg Rating</p>
+          <h2 style="margin: 5px 0 0 0; font-weight: 800; color: #fbc02d; display: flex; align-items: center; gap: 4px;">
+            <ion-icon name="star"></ion-icon> {{ vendorStats?.averageRating || '0.0' }}
+          </h2>
+        </div>
+        <div style="background: #f3e5f5; padding: 15px; border-radius: 12px;">
+          <p style="margin: 0; font-size: 11px; color: #7b1fa2; font-weight: bold;">Total Reviews</p>
+          <h2 style="margin: 5px 0 0 0; font-weight: 800; color: #8e24aa;">{{ vendorStats?.totalReviews || 0 }}</h2>
+        </div>
+      </div>
+
+      <h3 style="font-weight: bold; margin: 25px 0 12px 0; color: #333;">Recent Activity</h3>
+      <div style="background: white; border-radius: 12px; border: 1px solid #f0f0f0; overflow: hidden;">
+        <div *ngFor="let activity of vendorStats?.recentActivity" 
+             style="padding: 12px; border-bottom: 1px solid #f9f9f9; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: bold; font-size: 14px; color: #333;">Order #{{ activity.id }}</div>
+            <div style="font-size: 12px; color: #888;">{{ activity.customerName }}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 800; color: #001a33;">RM{{ activity.total | number:'1.2-2' }}</div>
+            <div style="font-size: 10px; font-weight: bold; color: #e67e22; text-transform: uppercase;">{{ activity.status }}</div>
+          </div>
+        </div>
+        <div *ngIf="!vendorStats?.recentActivity?.length" style="padding: 30px; text-align: center; color: #999; font-size: 13px;">
+          No recent orders.
+        </div>
+      </div>
+
+      <h3 style="font-weight: bold; margin: 25px 0 15px 0; color: #333;">Quick Actions</h3>
+      <div class="action-card" (click)="currentView = 'orders'" 
+           style="display: flex; align-items: center; background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #f0f0f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+        <div style="background: #ff9800; color: white; padding: 12px; border-radius: 10px; margin-right: 15px; display: flex;">
+          <ion-icon name="list-outline" style="font-size: 24px;"></ion-icon>
+        </div>
+        <div>
+          <strong style="display: block; font-size: 15px; color: #333;">Manage Orders</strong>
+          <span style="font-size: 12px; color: #888;">Process your incoming orders</span>
+        </div>
+      </div>
+      
+      <div class="action-card" (click)="currentView = 'menu'" 
+           style="display: flex; align-items: center; background: white; padding: 15px; border-radius: 12px; border: 1px solid #f0f0f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+        <div style="background: #e91e63; color: white; padding: 12px; border-radius: 10px; margin-right: 15px; display: flex;">
+          <ion-icon name="restaurant-outline" style="font-size: 24px;"></ion-icon>
+        </div>
+        <div>
+          <strong style="display: block; font-size: 15px; color: #333;">Manage Menu</strong>
+          <span style="font-size: 12px; color: #888;">Update prices and availability</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="currentView === 'orders'">
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 4px; border-radius: 12px;">
+        <button (click)="orderTab = 'active'"
+                [style.background]="orderTab === 'active' ? '#001a33' : 'transparent'"
+                [style.color]="orderTab === 'active' ? 'white' : '#666'"
+                style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; transition: 0.3s;">
+          Active
+        </button>
+        <button (click)="orderTab = 'completed'"
+                [style.background]="orderTab === 'completed' ? '#001a33' : 'transparent'"
+                [style.color]="orderTab === 'completed' ? 'white' : '#666'"
+                style="flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; transition: 0.3s;">
+          Completed
+        </button>
+      </div>
+
+      <div *ngFor="let order of dataService.orders">
+        <div *ngIf="(orderTab === 'active' && order.status !== 'Completed') || (orderTab === 'completed' && order.status === 'Completed')"
+             style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #f0f0f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #001a33;">Order #{{ order.id }}</h3>
+            <div [style.background]="getStatusColor(order.status)"
+                 style="padding: 5px 12px; border-radius: 20px; font-size: 11px; color: white; font-weight: bold;">
+              {{ order.status }}
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <ion-icon name="person" color="primary"></ion-icon>
+            <span style="font-size: 15px; font-weight: 600; color: #333;">{{ order.customerName }}</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: #e74c3c;">
+            <ion-icon name="time-outline"></ion-icon>
+            <span style="font-size: 13px; font-weight: bold;">ASAP <small style="color: #999; font-weight: normal; margin-left: 5px;">(10:08)</small></span>
+          </div>
+
+          <div style="background: #fafafa; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+            <p style="margin: 0 0 10px 0; font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Items Ordered</p>
+            <div *ngFor="let item of order.items" style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #444; font-size: 14px;">{{ item.quantity }}x {{ item.name }}</span>
+              <span style="font-weight: 700; color: #333; font-size: 14px;">RM{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+            </div>
+            <div style="border-top: 1px dashed #ddd; margin-top: 10px; padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: bold; font-size: 14px; color: #666;">Total</span>
+              <span style="font-weight: 900; font-size: 18px; color: #001a33;">RM{{ order.total | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <ion-button (click)="viewOrderDetails(order)" fill="outline" color="dark" style="flex: 1; --border-radius: 8px; font-weight: bold;">
+              Details
+            </ion-button>
+
+            <ion-button *ngIf="order.status === 'Pending'" (click)="updateStatus(order, 'Preparing')" style="flex: 2; --background: #3498db; --border-radius: 8px; font-weight: bold;">
+              Mark Preparing
+            </ion-button>
+
+            <ion-button *ngIf="order.status === 'Preparing'" (click)="updateStatus(order, 'Ready')" style="flex: 2; --background: #e67e22; --border-radius: 8px; font-weight: bold;">
+              Mark Ready
+            </ion-button>
+
+            <ion-button *ngIf="order.status === 'Ready'" (click)="updateStatus(order, 'Completed')" style="flex: 2; --background: #2ecc71; --border-radius: 8px; font-weight: bold;">
+              Mark Completed
+            </ion-button>
+
+            <ion-button *ngIf="order.status === 'Completed'" disabled style="flex: 2; --background: #f0f0f0; --color: #999; --border-radius: 8px; font-weight: bold;">
+              Completed
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="dataService.orders.length === 0" style="text-align: center; margin-top: 80px; color: #ccc;">
+        <ion-icon name="receipt-outline" style="font-size: 80px; opacity: 0.2;"></ion-icon>
+        <p style="margin-top: 15px; font-size: 16px; font-weight: 500;">No orders found</p>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

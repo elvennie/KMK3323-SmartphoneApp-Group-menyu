@@ -1,0 +1,57 @@
+<ion-content [fullscreen]="true" class="bg-gradient">
+  <div class="center-container">
+    
+    <div class="main-card">
+
+      <div class="lang-toggle">
+        <span class="lang-btn" 
+              [class.active]="lang === 'en'" 
+              (click)="setLang('en')">EN</span>
+              
+        <span class="lang-btn" 
+              [class.active]="lang === 'bm'" 
+              (click)="setLang('bm')">BM</span>
+      </div>
+
+      <div class="brand-card">
+        <div class="logo-placeholder">🍽️</div> 
+        <h1>menyu</h1>
+        <p class="subtitle">{{ txt[lang].subtitle }}</p>
+        <br>
+        <h3>Pak Lek Enterprise</h3>
+        <p class="desc">{{ txt[lang].desc }}</p>
+      </div>
+
+      <p class="label-role">{{ txt[lang].role }}</p>
+
+      <div class="role-row">
+        <button class="role-btn" (click)="gotoCustomer()">
+          <span class="icon">👤</span> {{ txt[lang].customer }}
+        </button>
+
+        <button class="role-btn" (click)="gotoVendor()">
+          <span class="icon">🏪</span> {{ txt[lang].vendor }}
+        </button>
+      </div>
+
+      <p class="forgot-link" (click)="onForgotPassword()">
+        <u>{{ txt[lang].forgot }}</u>
+      </p>
+
+      <hr class="divider">
+
+      <div class="signup-section">
+        <p>{{ txt[lang].noAccount }}</p>
+        <button class="btn-create" (click)="onCreateAccount()">
+          {{ txt[lang].create }}
+        </button>
+      </div>
+
+      <div class="help-box">
+        <strong>{{ txt[lang].needHelp }}</strong><br>
+        <small>{{ txt[lang].contact }} paklek@menyu.com</small>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

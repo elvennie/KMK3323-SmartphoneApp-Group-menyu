@@ -1,0 +1,129 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar style="--background: white; --color: #003366; padding-top: 10px;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cart" [icon]="'chevron-back'"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-weight: bold; color: #333;">Payment</ion-title>
+    
+    <ion-buttons slot="end" style="padding-right: 15px;">
+      <div style="width: 32px; height: 32px; background: #003366; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <span style="font-size: 18px;">🍽️</span>
+      </div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background: #f8f9fa;">
+  <div style="padding: 15px;">
+    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Payment Method</p>
+
+    <div style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid #eee;">
+      <h3 style="margin: 0 0 15px 0; font-size: 16px; font-weight: bold;">Order Summary</h3>
+      <div *ngFor="let item of dataService.cart" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+        <span style="color: #333;">{{ item.name }} x{{ item.quantity }}</span>
+        <span style="font-weight: 500;">RM{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px; font-weight: bold; font-size: 16px;">
+        <span>Total</span>
+        <span>RM{{ total | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+      <ion-icon name="time-outline" style="font-size: 20px; color: #333;"></ion-icon>
+      <h3 style="margin: 0; font-size: 16px; font-weight: bold;">Pickup Time</h3>
+    </div>
+
+    <div (click)="pickupOption = 'asap'" 
+         [style.border]="pickupOption === 'asap' ? '2px solid #003366' : '1px solid #eee'"
+         style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
+      <div [style.border]="pickupOption === 'asap' ? '6px solid #003366' : '2px solid #ddd'" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+      <div style="flex: 1;">
+        <div style="font-weight: bold; color: #333;">As Soon As Possible</div>
+        <div style="color: #666; font-size: 13px;">Ready in ~15-20 minutes</div>
+      </div>
+    </div>
+
+    <div (click)="pickupOption = 'later'" 
+         [style.border]="pickupOption === 'later' ? '2px solid #003366' : '1px solid #eee'"
+         style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
+      <div [style.border]="pickupOption === 'later' ? '6px solid #003366' : '2px solid #ddd'" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+      <div style="flex: 1;">
+        <div style="font-weight: bold; color: #333;">Schedule for Later</div>
+        <div style="color: #666; font-size: 13px;">Choose your preferred time</div>
+      </div>
+    </div>
+
+    <div *ngIf="pickupOption === 'later'" 
+         style="background: #eef4ff; border-radius: 12px; padding: 15px; margin-bottom: 25px; border: 1px solid #003366;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 14px; font-weight: 600; color: #003366;">Select Date:</span>
+        <ion-datetime-button datetime="datePicker"></ion-datetime-button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600; color: #003366;">Select Time (AM/PM):</span>
+        <ion-datetime-button datetime="timePicker"></ion-datetime-button>
+      </div>
+
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+            id="datePicker" 
+            presentation="date" 
+            [(ngModel)]="scheduledDate" 
+            [min]="minDate" 
+            [max]="maxDate"
+            mode="md">
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>
+
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+            id="timePicker" 
+            presentation="time" 
+            hourCycle="h12" 
+            [(ngModel)]="scheduledTime" 
+            mode="md">
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>
+    </div>
+
+    <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 12px;">Payment Method</h3>
+    <div (click)="paymentMethod = 'cash'" 
+         [style.border]="paymentMethod === 'cash' ? '2px solid #003366' : '1px solid #eee'"
+         style="background: white; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; margin-bottom: 25px; cursor: pointer;">
+      <div style="background: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #eee;">
+        <ion-icon name="cash-outline" style="font-size: 24px; color: #003366;"></ion-icon>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-weight: bold; color: #333;">Cash at Stall</div>
+        <div style="color: #666; font-size: 13px;">Pay when collecting order</div>
+      </div>
+      <div [style.border]="paymentMethod === 'cash' ? '6px solid #003366' : '2px solid #ddd'" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+    </div>
+
+    <div style="background: #f0f7ff; border-radius: 12px; padding: 16px; border: 1px solid #d0e3ff;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #003366;">
+        <ion-icon name="document-text-outline" style="font-size: 18px;"></ion-icon>
+        <span style="font-weight: bold; font-size: 14px;">Payment Notes:</span>
+      </div>
+      <ul style="margin: 0; padding-left: 20px; color: #444; font-size: 13px; line-height: 1.6;">
+        <li>Cash payments accepted at collection</li>
+        <li>Please prepare exact amount if possible</li>
+        <li>You will receive order confirmation</li>
+      </ul>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border" style="background: white; padding: 15px 20px 25px 20px;">
+  <button (click)="confirmOrder()" 
+          style="width: 100%; background: #003366; color: white; border: none; padding: 18px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 51, 102, 0.2);">
+    Confirm Order
+  </button>
+</ion-footer>

@@ -1,0 +1,183 @@
+/* --- GLOBAL & HEADER --- */
+.custom-header {
+  background: #002244;
+  padding: 15px 10px;
+  color: white;
+
+  .header-content {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+
+    .header-left {
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+
+      /* Paksa butang navigasi (Back/Logout) jadi putih */
+      .header-btn {
+        --color: white !important;
+        color: white !important;
+        --padding-start: 0;
+        margin: 0;
+
+        ion-icon {
+          font-size: 24px;
+          color: white !important;
+        }
+      }
+
+      .main-title { margin: 0; font-size: 17px; font-weight: bold; }
+      .sub-title { margin: 0; font-size: 11px; opacity: 0.8; }
+    }
+    
+    .header-right .lang-switch {
+      background: rgba(255, 255, 255, 0.15); 
+      padding: 4px 12px; 
+      border-radius: 20px; 
+      font-size: 11px;
+      .lang-option.active { color: #00ff88; font-weight: bold; }
+    }
+  }
+}
+
+.container { 
+  padding: 0; /* Padding dikawal oleh div di dalam ion-content */
+  background: #f4f7f9; 
+  min-height: 100%; 
+}
+
+.section-title { 
+  font-weight: bold; 
+  margin: 20px 0 12px 0; 
+  color: #002244; 
+  font-size: 18px; 
+}
+
+/* --- DASHBOARD STATS --- */
+.stats-grid-top { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); /* Tukar kepada 2 kolum untuk lebih kemas di mobile */
+  gap: 12px; 
+  margin-bottom: 12px; 
+}
+
+.stats-grid-bottom { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 12px; 
+  margin-bottom: 25px; 
+}
+
+.stat-card-wide {
+  padding: 15px; 
+  border-radius: 12px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04); 
+  background: white;
+  .label { font-size: 12px; margin: 0; font-weight: 500; color: #666; }
+  .value { font-size: 20px; font-weight: 800; margin: 5px 0 0 0; }
+}
+
+.orange-light { background: #fff5eb; color: #f57c00; }
+.blue-dark-card { background: #002244; color: white; }
+.blue-soft-light { background: #e3f2fd; color: #1976d2; }
+.blue-vibrant { background: #e1f5fe; color: #0288d1; }
+.white-card { border: 1px solid #e0e6ed; color: #002244; }
+
+/* --- RECENT ACTIVITY --- */
+.activity-box {
+  background: white; 
+  border-radius: 12px; 
+  padding: 15px; 
+  border: 1px solid #e0e6ed; 
+  margin-bottom: 25px;
+  .activity-item-header {
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 10px; 
+    font-weight: bold;
+    color: #999; 
+    text-transform: uppercase; 
+    border-bottom: 1px solid #f0f0f0; 
+    padding-bottom: 8px; 
+    margin-bottom: 10px;
+  }
+  .recent-order-row {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px 0; 
+    border-bottom: 1px solid #f9f9f9;
+    &:last-child { border-bottom: none; }
+    .activity-left {
+      .order-id { font-weight: bold; color: #002244; font-size: 14px; }
+      .customer-name-text { font-size: 12px; color: #666; }
+    }
+    .activity-price-tag { font-weight: bold; color: #333; font-size: 14px; }
+  }
+}
+
+/* --- QUICK ACTIONS --- */
+.action-bar {
+  display: flex; 
+  align-items: center; 
+  padding: 15px; 
+  border-radius: 12px; 
+  background: white; 
+  border: 1px solid #eee; 
+  gap: 15px; 
+  margin-bottom: 10px;
+  .action-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .orange-bg { background: #fff3e0; color: #ff9800; }
+  .pink-bg { background: #fce4ec; color: #e91e63; }
+  .action-text { flex: 1; strong { font-size: 15px; color: #333; display: block; } span { font-size: 12px; color: #888; } }
+}
+
+/* --- MANAGE MENU (FIGMA STYLE) --- */
+.menu-view-container {
+  .menu-card-figma {
+    background: white; 
+    border: 2px solid #00a5cf; 
+    border-radius: 8px; 
+    margin-bottom: 20px; 
+    overflow: hidden;
+    .card-top-section {
+      display: flex; 
+      padding: 15px; 
+      gap: 15px;
+      .item-image-box { width: 80px; height: 80px; border-radius: 8px; overflow: hidden; img { width: 100%; height: 100%; object-fit: cover; } }
+      .item-info-main {
+        flex: 1;
+        .title-edit-row { display: flex; justify-content: space-between; h3 { margin: 0; font-size: 18px; font-weight: bold; } }
+        .item-subtext { font-size: 12px; color: #888; margin: 2px 0; }
+        .price-availability-line {
+          display: flex; 
+          justify-content: space-between; 
+          align-items: center; 
+          margin-top: 10px;
+          .price-text { font-weight: bold; color: #002244; }
+          .status-badge { padding: 4px 12px; border-radius: 20px; border: 2px solid #ff3b30; color: #ff3b30; font-weight: bold; font-size: 11px; }
+          .status-badge.is-available { border-color: #34c759; color: #34c759; }
+        }
+      }
+    }
+    .card-action-grid {
+      display: grid; 
+      grid-template-columns: 1fr 1fr 1fr; 
+      border-top: 1px solid #e0e6ed;
+      .action-box-btn { background: transparent; border: none; border-right: 1px solid #e0e6ed; padding: 12px 5px; font-size: 12px; color: #007aff; }
+      .action-box-btn.delete-btn { color: #ff3b30; border: 2px solid #ff3b30; margin: 8px; border-radius: 6px; }
+    }
+  }
+}
+
+/* --- ORDERS MANAGEMENT --- */
+.order-card-detail {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}

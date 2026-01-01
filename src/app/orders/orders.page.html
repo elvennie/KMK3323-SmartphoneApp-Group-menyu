@@ -1,0 +1,129 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar style="--background: white; --color: #003366; padding-top: 10px;">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" style="--color: #003366; background: #f4f4f4; border-radius: 8px; margin-left: 10px;">
+        <ion-icon name="chevron-back" style="font-size: 20px;"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    
+    <ion-title style="font-weight: bold; font-size: 18px; color: #333;">My Orders</ion-title>
+    
+    <ion-buttons slot="end" style="padding-right: 15px;">
+      <div style="width: 32px; height: 32px; background: #003366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <span style="font-size: 18px;">🍽️</span>
+      </div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background: #f8f9fa;">
+  <div style="padding: 15px;">
+    
+    <div style="background: #e9f2ff; border: 1px solid #003366; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
+      <ion-icon name="time-outline" style="font-size: 32px; color: #003366;"></ion-icon>
+      <div>
+        <div style="color: #333; font-size: 14px; font-weight: 500;">Estimated Queue Time</div>
+        <div style="font-size: 24px; font-weight: bold; color: #003366;">10 minutes</div>
+        <div style="color: #666; font-size: 12px;">Based on {{ dataService.orders.length }} order(s) in queue</div>
+      </div>
+    </div>
+
+    <div *ngIf="dataService.orders.length === 0" style="text-align: center; margin-top: 50px; color: #888;">
+      <ion-icon name="receipt-outline" style="font-size: 64px; opacity: 0.3;"></ion-icon>
+      <p>No active orders found.</p>
+    </div>
+
+    <div *ngFor="let order of dataService.orders" 
+         style="background: white; border-radius: 12px; padding: 16px; border: 1px solid #eee; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+        <div>
+          <div style="font-weight: bold; font-size: 16px;">Order #{{ order.id }}</div>
+          <div style="display: flex; align-items: center; gap: 5px; color: #003366; font-size: 13px; margin-top: 4px;">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ order.type }}</span>
+          </div>
+          <div style="color: #888; font-size: 12px; margin-top: 4px;">{{ order.date }}</div>
+        </div>
+        <span [style.background]="order.status === 'Pending' ? '#ff4d4d' : (order.status === 'Completed' ? '#2dd36f' : '#3880ff')" 
+              style="color: white; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+          {{ order.status }}
+        </span>
+      </div>
+
+      <div style="border-top: 1px solid #f5f5f5; padding-top: 12px;">
+        <div *ngFor="let item of order.items" style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px;">
+          <span>{{ item.quantity }}x {{ item.name }}</span>
+          <span>RM{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 12px; border-top: 1px dashed #ddd; padding-top: 12px; color: #003366;">
+          <span>Total:</span>
+          <span>RM{{ order.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 15px;">
+        <button (click)="openDetails(order)" 
+                style="flex: 1; background: white; color: #333; border: 1px solid #ddd; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 13px;">
+          Details
+        </button>
+
+        <button style="flex: 1; background: #f4f4f4; color: #003366; border: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 13px;">
+          Reorder
+        </button>
+
+        <button *ngIf="order.status === 'Completed' && !order.isRated"
+                (click)="openRatingModal(order.id)" 
+                style="flex: 1.2; background: #ffc409; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          <ion-icon name="star-outline"></ion-icon>
+          Rate Order
+        </button>
+
+        <div *ngIf="order.isRated" 
+             style="flex: 1.2; background: #e9fdf1; color: #2dd36f; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; font-size: 13px; border: 1px solid #2dd36f;">
+          Rated ✓
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar style="--background: #f8f9fa;">
+          <ion-title>Order Summary</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="isModalOpen = false" style="font-weight: bold;">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding" style="--background: white;">
+        <div *ngIf="selectedOrder">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 14px; color: #888;">Order ID</div>
+            <div style="font-size: 22px; font-weight: 800; color: #003366;">#{{ selectedOrder.id }}</div>
+          </div>
+
+          <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <div *ngFor="let item of selectedOrder.items" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span style="color: #333;">{{ item.quantity }}x {{ item.name }}</span>
+              <span style="font-weight: 600;">RM{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+            </div>
+            <div style="border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px; display: flex; justify-content: space-between; font-weight: bold; font-size: 18px;">
+              <span>Total Paid</span>
+              <span style="color: #003366;">RM{{ selectedOrder.total | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <div style="border: 1px solid #eee; border-radius: 10px; padding: 15px;">
+            <div style="font-size: 12px; color: #888; text-transform: uppercase; margin-bottom: 5px;">Pickup Method</div>
+            <div style="font-weight: 600; color: #333;">Self Pickup ({{ selectedOrder.type }})</div>
+            <div style="font-size: 12px; color: #888; text-transform: uppercase; margin-top: 15px; margin-bottom: 5px;">Order Date</div>
+            <div style="font-weight: 600; color: #333;">{{ selectedOrder.date }}</div>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

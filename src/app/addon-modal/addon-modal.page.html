@@ -1,0 +1,58 @@
+<ion-header class="ion-no-border">
+  <div style="background: #003366; color: white; border-radius: 0 0 20px 20px;">
+    <ion-toolbar style="--background: transparent; --color: white;">
+      <ion-title style="font-weight: bold; font-size: 16px;">Add Extras?</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="cancel()">
+          <ion-icon name="close" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <div style="padding: 0 20px 15px 20px;">
+      <p style="margin: 0; font-size: 12px; opacity: 0.8;">You are ordering:</p>
+      <p style="margin: 2px 0 0 0; font-weight: bold; font-size: 16px;">{{ item?.name }}</p>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content style="--background: #f4f6f8;">
+  <div style="padding: 15px; padding-bottom: 60px;">
+    <p style="color: #666; font-size: 13px; font-weight: 600; margin-bottom: 10px;">Select add-ons (optional):</p>
+    
+    <div *ngFor="let addon of addOnList" 
+         style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 12px; margin-bottom: 10px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+      
+      <div>
+        <div style="font-weight: bold; color: #333; font-size: 14px;">{{ addon.name }}</div>
+        <div style="color: #003366; font-size: 13px; font-weight: 800; margin-top: 2px;">
+          + RM{{ addon.price | number:'1.2-2' }}
+        </div>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 10px; background: #f0f2f5; padding: 4px; border-radius: 8px;">
+        <button (click)="dec(addon.id)" 
+                style="width: 28px; height: 28px; border-radius: 6px; border: none; background: white; color: #003366; font-weight: bold; font-size: 16px;">-</button>
+        
+        <span style="font-weight: 800; font-size: 14px; color: #003366; min-width: 15px; text-align: center;">
+          {{ quantities[addon.id] }}
+        </span>
+        
+        <button (click)="inc(addon.id)" 
+                style="width: 28px; height: 28px; border-radius: 6px; border: none; background: #003366; color: white; font-weight: bold; font-size: 16px;">+</button>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border" style="background: white; padding: 10px 20px 25px 20px; border-top: 1px solid #eee;">
+  <div style="display: flex; gap: 10px;">
+    <button (click)="cancel()" 
+            style="flex: 1; padding: 12px; border: 1.5px solid #eee; border-radius: 10px; background: white; color: #888; font-weight: bold; font-size: 14px;">
+      Cancel
+    </button>
+    <button (click)="confirm()" 
+            style="flex: 2; padding: 12px; background: #003366; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 14px;">
+      Add to Cart
+    </button>
+  </div>
+</ion-footer>

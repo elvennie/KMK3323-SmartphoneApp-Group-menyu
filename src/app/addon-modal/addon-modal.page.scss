@@ -1,0 +1,13 @@
+ion-content {
+    --background: #f4f6f8;
+}
+
+.addon-card {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Pastikan butang + dan - nampak kemas */
+button:active {
+    opacity: 0.7;
+    transform: scale(0.95);
+}
